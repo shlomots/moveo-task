@@ -1,62 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Socket.io Client</title>
-    <!-- Using CDN for Socket.io client -->
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-    <script>
-        var socket = io('http://localhost:3001');
-
-        function setup() {
-            var textArea = document.getElementById('sharedTextArea');
-            textArea.addEventListener('input', function() {
-                var text = textArea.value;
-                socket.emit('text change', text);
-            });
-
-            socket.on('text update', function(text) {
-                // Update the text area only if the incoming text is different
-                // to avoid interrupting the user's typing
-                if (textArea.value !== text) {
-                    textArea.value = text;
-                }
-            });
-        }
-
-        socket.on('connect', function() {
-            console.log('connected to server');
-        });
-
-        // Call setup after the page is fully loaded
-        window.onload = setup;
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        fetch('http://localhost:3001/visits')
-                .then(response => response.json())
-                .then(data => {
-                    var textArea = document.getElementById('sharedTextArea');
-                    let visits = data.visitorNumber;
-                    if (visits == 0) {
-                        // Allow editing
-                        textArea.removeAttribute('readonly');
-                    } else {
-                        // Read-only
-                        textArea.setAttribute('readonly', true);
-                    }
-                    // Assuming codeBlockContent is defined elsewhere and available here
-                    // codeArea.value = codeBlockContent[id] || '// Default code or error message';
-                })
-                .catch(error => {
-                    console.error('Error fetching visit data:', error);
-                });
-        });
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Block Lobby</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <h1>code block</h1>
-    <textarea id="sharedTextArea" style="width: 100%; height: 300px;">
-        // Write your code here...
-    </textarea>
+    <h1>Choose a Code Block</h1>
+    <ul class="code-block-list">
+        <li><a href="code-block.html?room=1">Code Block 1</a></li>
+        <li><a href="code-block.html?room=2">Code Block 2</a></li>
+        <li><a href="code-block.html?room=3">Code Block 3</a></li>
+        <li><a href="code-block.html?room=4">Code Block 4</a></li>
+    </ul>
+    <script src="js/script.js"></script>
 </body>
 </html>

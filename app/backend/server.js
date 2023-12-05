@@ -18,11 +18,21 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    socket.on('text change', (text) => {
-        // Broadcast the text change to all clients except the one who sent it
-        socket.broadcast.emit('text update', text);
+    // Listen for 'join room' event with roomNumber
+    socket.on('join room', (roomNumber) => {
+        socket.join(roomNumber); // Join the socket to the room
+        console.log(`Socket ${socket.id} joined room ${roomNumber}`);
     });
 
+    // Listen for 'text change' event with data containing room and text
+    socket.on('text change', (data) => {
+        // data should be an object like { room: '1', text: '...' }
+        // Broadcast the text change to all clients in the same room except the one who sent it
+        socket.to(data.room).emit('text update', data);
+        console.log(`Broadcasted text change in room ${data.room}`);
+    });
+
+    // Listen for 'disconnect' event
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
@@ -36,12 +46,9 @@ let visitCounts = {
 };
 
 app.get('/visits', (req, res) => {
-    const id = 1;
-    if (!visitCounts[id]) {
-        visitCounts[id] = 0;
-    }
-    res.json({ visitorNumber: visitCounts[id] });
-    visitCounts[id]++;
+    const room = parseInt(req.query.room, 10);
+    res.json({ visitorNumber: visitCounts[room] });
+    visitCounts[room]++;
 });
 
 server.listen(3001, () => {
