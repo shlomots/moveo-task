@@ -45,6 +45,12 @@
                 joinRoom(roomNumber);
             }
         });
+        
+        socket.on('disconnect', function(){
+            socket.emit('disconnect', {room:getRoomNumber()});
+        });
+            
+        
 
 
         window.onload = setup;

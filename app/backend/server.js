@@ -17,9 +17,10 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-
+    let client_room_number;
     // Listen for 'join room' event with roomNumber
     socket.on('join room', (roomNumber) => {
+        client_room_number = roomNumber;//this varibale will be individual for every client
         socket.join(roomNumber); // Join the socket to the room
         console.log(`Socket ${socket.id} joined room ${roomNumber}`);
     });
@@ -33,8 +34,10 @@ io.on('connection', (socket) => {
     });
 
     // Listen for 'disconnect' event
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (data) => {
+        visitCounts[client_room_number]--;
         console.log('user disconnected');
+        console.log(`the number of visits in room ${client_room_number} = ${visitCounts[client_room_number]}`);
     });
 });
 
